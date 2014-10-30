@@ -36,10 +36,19 @@ tweets = [tweet for tweet in tweets if tweet.id not in enviados]
 
 random.shuffle(tweets)
 
+i=0
 
 for tweet in tweets:
+    i=i+1
     sn = tweet.user.screen_name
-    m = "[TEST] Gracinhas por darnos de comer, @%s! Se ves a @OSHWDem, agradeceremocho persoalmente!" % (sn)
+    m1 = "[TEST] Gracinhas por darnos de comer, @%s! Se ves a @OSHWDem, agradeceremocho persoalmente!" % (sn)
+    m2 = "[TEST] Parece que se che adiantaron, @%s! Proba nun cacho :)" % (sn)
+    
+    if i==1:
+     m = m1
+    else:
+     m = m2
+    
     try:
     	s = api.update_status(m, tweet.id)
     	enviados.append(tweet.id)
