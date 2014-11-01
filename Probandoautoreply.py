@@ -37,6 +37,8 @@ tweets = api.search(q="comed, tortugas!")
 tweets = [tweet for tweet in tweets if re.match("^comed,? tortugas!?$", tweet.text.lower())]
 tweets = [tweet for tweet in tweets if tweet.id not in enviados]
 
+output=commands.getoutput('sudo fswebcam -d /dev/video2 -r 640x480 /home/debian/code/tortugas.JPG')
+
 random.shuffle(tweets)
 
 i=0
