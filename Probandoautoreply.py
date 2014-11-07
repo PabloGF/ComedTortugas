@@ -57,7 +57,7 @@ for tweet in tweets:
      m = m2
 
 
-video = open('/home/debian/code/tortugas.JPG', 'rb')
+    open('/home/debian/code/tortugas.JPG', 'rb') as video
 
     
     try:
