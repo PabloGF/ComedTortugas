@@ -57,8 +57,9 @@ with open('/home/debian/code/tortugas.JPG', 'rb') as video:
 	    	s = api.update_with_media(m, tweet.id, media=video)
 	    	enviados.append(tweet.id)
 	    	print "Tweet replied to @%s :)" % (sn)
-	    except tweepy.error.TweepError:
+	    except tweepy.error.TweepError as error:
 	    	print "Error replying to @%s :(" % (sn)
+	    	print error
 
 set_enviados (PATH_LISTA, enviados)
 
