@@ -36,36 +36,31 @@ enviados = get_enviados (PATH_LISTA)
 tweets = api.search(q="comed, tortugas!")
 tweets = [tweet for tweet in tweets if re.match("^comed,? tortugas!?$", tweet.text.lower())]
 tweets = [tweet for tweet in tweets if tweet.id not in enviados]
+random.shuffle(tweets)
 
 output=commands.getoutput('sudo fswebcam -d /dev/video2 -r 640x480 /home/debian/code/tortugas.JPG')
 
-random.shuffle(tweets)
+with open('/home/debian/code/tortugas.JPG', 'rb') as video:
+	
+	if tweets:
+	     arduino.write(comando)
+	     arduino.close()
 
-i=0
-
-for tweet in tweets:
-    i=i+1
-    sn = tweet.user.screen_name
-    m1 = "[TEST] Gracinhas por darnos de comer, @%s! Se ves a @OSHWDem, agradeceremocho persoalmente!" % (sn)
-    m2 = "[TEST] Parece que se che adiantaron, @%s! Proba nun cacho :)" % (sn)
-    
-    if i==1:
-     arduino.write(comando)
-     m = m1
-     arduino.close()
-    else:
-     m = m2
-
-
-    open('/home/debian/code/tortugas.JPG', 'rb') as video
-
-    
-    try:
-    	s = api.update_with_media(m, tweet.id, media=video)
-    	enviados.append(tweet.id)
-    	print "Tweet replied to @%s :)" % (sn)
-    except tweepy.error.TweepError:
-    	print "Error replying to @%s :(" % (sn)
+	for i,tweet in enumerate(tweets):
+	    sn = tweet.user.screen_name
+	    m1 = "[TEST] Gracinhas por darnos de comer, @%s! Se ves a @OSHWDem, agradeceremocho persoalmente!" % (sn)
+	    m2 = "[TEST] Parece que se che adiantaron, @%s! Proba nun cacho :)" % (sn)
+	    
+	    m = m2 if i else m1
+	    
+	    try:
+	    	s = api.update_with_media(m, tweet.id, media=video)
+	    	enviados.append(tweet.id)
+	    	print "Tweet replied to @%s :)" % (sn)
+	    except tweepy.error.TweepError as error:
+	    	print "Error replying to @%s :(" % (sn)
+	    	print error
 
 set_enviados (PATH_LISTA, enviados)
+
 
