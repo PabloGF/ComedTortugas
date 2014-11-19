@@ -14,11 +14,12 @@ ACCESS_TOKEN = keys['access_token']
 ACCESS_TOKEN_SECRET = keys['access_token_secret']
 
 PATH_LISTA="/home/debian/code/.tweets_enviados"
+PATH_FOTO='/home/debian/code/tortugas.JPG'
 
 def get_enviados (path):
         try:
                 with open(path, "r") as archivo:
-                          return [int(line) for line in archivo.split("\n")]
+			return map(lambda x:int(x),archivo.readlines())
         except:
                 return []
 
@@ -38,29 +39,28 @@ tweets = [tweet for tweet in tweets if re.match("^comed,? tortugas!?$", tweet.te
 tweets = [tweet for tweet in tweets if tweet.id not in enviados]
 random.shuffle(tweets)
 
-output=commands.getoutput('sudo fswebcam -d /dev/video2 -r 640x480 /home/debian/code/tortugas.JPG')
+output=commands.getoutput('sudo fswebcam -d /dev/video2 -r 640x480 %s' % (PATH_FOTO))
 
-with open('/home/debian/code/tortugas.JPG', 'rb') as video:
-	
-	if tweets:
-	     arduino.write(comando)
-	     arduino.close()
+if tweets:
+     arduino.write(comando)
+     arduino.close()
 
-	for i,tweet in enumerate(tweets):
-	    sn = tweet.user.screen_name
-	    m1 = "[TEST] Gracinhas por darnos de comer, @%s! Se ves a @OSHWDem, agradeceremocho persoalmente!" % (sn)
-	    m2 = "[TEST] Parece que se che adiantaron, @%s! Proba nun cacho :)" % (sn)
-	    
-	    m = m2 if i else m1
-	    
-	    try:
-	    	s = api.update_with_media(m, tweet.id, media=video)
-	    	enviados.append(tweet.id)
-	    	print "Tweet replied to @%s :)" % (sn)
-	    except tweepy.error.TweepError as error:
-	    	print "Error replying to @%s :(" % (sn)
-	    	print error
+for i,tweet in enumerate(tweets):
+    sn = tweet.user.screen_name
+    m1 = "[TEST] Gracinhas por darnos de comer, @%s! Se ves a @OSHWDem, agradeceremocho persoalmente!" % (sn)
+    m2 = "[TEST] Parece que se che adiantaron, @%s! Proba nun cacho :)" % (sn)
+    
+    m = m2 if i else m1
+    
+    try:
+	s = api.update_with_media(PATH_FOTO, m, tweet.id)
+	enviados.append(tweet.id)
+	print "Tweet replied to @%s :)" % (sn)
+    except tweepy.error.TweepError as error:
+	print "Error replying to @%s :(" % (sn)
+	print error
 
 set_enviados (PATH_LISTA, enviados)
+
 
 
